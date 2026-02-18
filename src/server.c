@@ -1,17 +1,10 @@
-#include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdlib.h>
 
-
-void handle_error(const char *err_msg)
-{
-	perror(err_msg);
-	exit(EXIT_FAILURE);
-}
+#include "errorfn.h"
 
 
 int main(int argc, char **argv)
