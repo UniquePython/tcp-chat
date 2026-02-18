@@ -63,11 +63,3 @@ dirs:
 .PHONY: clean
 clean:
 	$(RM) -r $(BUILD_DIR)/* $(BIN_DIR)/*
-
-# -----------------------------
-# Run program
-# -----------------------------
-.PHONY: run
-ARGS ?= 8080 5
-run: release
-	./$(BIN_DIR)/$(TARGET) $(ARGS)
