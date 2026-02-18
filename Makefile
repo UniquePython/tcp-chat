@@ -39,7 +39,7 @@ debug: dirs $(BIN_DIR)/$(TARGET)
 # Build executable
 # -----------------------------
 $(BIN_DIR)/$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
 # -----------------------------
 # Build object files with dependency tracking
@@ -63,3 +63,11 @@ dirs:
 .PHONY: clean
 clean:
 	$(RM) -r $(BUILD_DIR)/* $(BIN_DIR)/*
+
+# -----------------------------
+# Run program
+# -----------------------------
+.PHONY: run
+ARGS ?= 8080 5
+run: release
+	./$(BIN_DIR)/$(TARGET) $(ARGS)
