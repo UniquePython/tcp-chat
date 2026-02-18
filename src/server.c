@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	
 	int enable = 1;
 	if (setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-		printf("WARNING: setsockopt(SO_REUSEADDR) failed\n");
+		perror("WARNING: setsockopt(SO_REUSEADDR) failed\n");
 	}
 
 	struct sockaddr_in server_address;
@@ -40,11 +40,33 @@ int main(int argc, char **argv)
 	if (listen(server_sockfd, atoi(argv[2])) < 0) handle_error("listen");
 
 	struct sockaddr_in client_address;
-	int client_addrlen = sizeof(client_address);
-	int client_sockfd = accept(server_sockfd, (struct sockaddr *)&client_address, (socklen_t*)&client_addrlen);
+	socklen_t client_addrlen = sizeof(client_address);
+
+	int client_sockfd = accept(server_sockfd, (struct sockaddr *)&client_address, &client_addrlen);
 	if (client_sockfd < 0) handle_error("accept");
-	printf("Client connected!\n");
+
+	char client_ip[INET_ADDRSTRLEN];
+	const char *ip = inet_ntop(AF_INET, &client_address.sin_addr, client_ip, sizeof(client_ip));
+	printf("Client connected! [IP: %s]\n", ip);
+
+	char buffer[1024];
+	while (1)
+	{
+		memset(buffer, 0, sizeof(buffer));
+		ssize_t bytes_read = read(client_sockfd, buffer, sizeof(buffer) - 1);
+
+		if (bytes_read < 0) handle_error("read");
+		if (bytes_read == 0)
+		{
+			printf("Client disconnected!\n");
+			break;
+		}
+
+		printf("%s", buffer);
+	}
+
 	close(client_sockfd);
+	close(server_sockfd);
 
 	printf("SUCCESS!\n");
 
