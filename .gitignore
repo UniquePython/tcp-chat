@@ -19,3 +19,4 @@ core
 core.*
 
 *.log
+*log
