@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	
 	int enable = 1;
 	if (setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-		perror("WARNING: setsockopt(SO_REUSEADDR) failed\n");
+		perror("WARNING: setsockopt(SO_REUSEADDR) failed");
 	}
 
 	struct sockaddr_in server_address;
@@ -46,8 +46,12 @@ int main(int argc, char **argv)
 	if (client_sockfd < 0) handle_error("accept");
 
 	char client_ip[INET_ADDRSTRLEN];
-	const char *ip = inet_ntop(AF_INET, &client_address.sin_addr, client_ip, sizeof(client_ip));
-	printf("Client connected! [IP: %s]\n", ip);
+	if (inet_ntop(AF_INET, &client_address.sin_addr, client_ip, sizeof(client_ip)) == NULL)
+	{
+		perror("Could not parse client IP");
+		printf("Client connected!");
+	}
+	else printf("Client connected! [IP: %s]\n", client_ip);
 
 	char buffer[1024];
 	while (1)
